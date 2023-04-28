@@ -1,5 +1,5 @@
 #Napongkorn Suvanphatep
-#last Edit 4/8/2023 : attempt ad adding non continuous, sample from a list design variable
+#last Edit 4/28/2023 : add simple mutation described for continuous dv, -0.5<phi<1.5
 
 
 import numpy as np
@@ -21,7 +21,7 @@ class Design_string:
         print(self.continuous_dv_list,self.custom_dv_list)
 
 class myGA:
-    def __init__(self, maxGen: int,numString: int, numParent: int, numOffspring: int, TOL: float, num_continuous_dv: int, varMin, varMax, procFunction: callable, objFunction: callable, num_custom_dv:int  =0, custom_dv_gen_Function:callable = None, custom_dv_breed_Function:callable = None,  parallel_simulation:bool = False, parallel_cost:bool = False, node:int = -1) -> None:
+    def __init__(self, maxGen: int,numString: int, numParent: int, numOffspring: int, TOL: float, num_continuous_dv: int, varMin, varMax, procFunction: callable, objFunction: callable, mutate_continuous_dv:bool = False, num_custom_dv:int  =0, custom_dv_gen_Function:callable = None, custom_dv_breed_Function:callable = None,  parallel_simulation:bool = False, parallel_cost:bool = False, node:int = -1) -> None:
         ##Input Description##
         #maxGen : integer, maximum total generations (terminates code if TOL is not reached)
         #numString : integer, the number of total design strings per generation
@@ -53,6 +53,9 @@ class myGA:
         self._parallel_cost_flag = False
         if parallel_cost == True:
             self._parallel_cost_flag = True
+
+        if mutate_continuous_dv:
+            self.mutate_continuous_dv_flag = True
 
         self._num_custom_dv = num_custom_dv
         if self._num_custom_dv > 0:
@@ -180,10 +183,12 @@ class myGA:
         offspring_custom_dv_arr = []
         
         for pair in range(parentpairs):
-            psi = np.random.rand(2)
+            phi = np.random.rand(2)
+            if self.mutate_continuous_dv_flag:
+                phi = 2*phi-0.5
             for var in range(self._num_continuous_dv):
-                offspring_continuous_dv_arr[pair*2,var] = psi[0]*parent_continuous_dv[pair*2,var] + (1-psi[0])*parent_continuous_dv[pair*2+1,var]
-                offspring_continuous_dv_arr[pair*2+1,var] = psi[1]*parent_continuous_dv[pair*2,var] + (1-psi[1])*parent_continuous_dv[pair*2+1,var]
+                offspring_continuous_dv_arr[pair*2,var] = phi[0]*parent_continuous_dv[pair*2,var] + (1-phi[0])*parent_continuous_dv[pair*2+1,var]
+                offspring_continuous_dv_arr[pair*2+1,var] = phi[1]*parent_continuous_dv[pair*2,var] + (1-phi[1])*parent_continuous_dv[pair*2+1,var]
 
             if self._num_custom_dv > 0:    
                 kids_custom_dv = self._custom_dv_breed(preservedParent[pair].custom_dv_list,preservedParent[pair+1].custom_dv_list)
