@@ -184,12 +184,26 @@ class myGA:
         
         for pair in range(parentpairs):
             phi = np.random.rand(2)
+            temp_cont_dv = np.zeros((2,self._num_continuous_dv))
             if self.mutate_continuous_dv_flag:
                 phi = 2*phi-0.5
             for var in range(self._num_continuous_dv):
-                offspring_continuous_dv_arr[pair*2,var] = phi[0]*parent_continuous_dv[pair*2,var] + (1-phi[0])*parent_continuous_dv[pair*2+1,var]
-                offspring_continuous_dv_arr[pair*2+1,var] = phi[1]*parent_continuous_dv[pair*2,var] + (1-phi[1])*parent_continuous_dv[pair*2+1,var]
+                temp_cont_dv[0] = phi[0]*parent_continuous_dv[pair*2,var] + (1-phi[0])*parent_continuous_dv[pair*2+1,var]
+                temp_cont_dv[1] = phi[1]*parent_continuous_dv[pair*2,var] + (1-phi[1])*parent_continuous_dv[pair*2+1,var]
 
+                if self.mutate_continuous_dv_flag:
+                    for i, cont_dv in enumerate(temp_cont_dv):
+                        for j, value in enumerate(cont_dv):
+                            if value < self._varMin[j]:
+                                temp_cont_dv[i,j] = self._varMin[j]
+                            if value > self._varMax[j]:
+                                temp_cont_dv[i,j] = self._varMax[j]
+                            else:
+                                pass
+                            
+                offspring_continuous_dv_arr[pair*2,var] = temp_cont_dv[0]
+                offspring_continuous_dv_arr[pair*2+1,var] = temp_cont_dv[1]
+            
             if self._num_custom_dv > 0:    
                 kids_custom_dv = self._custom_dv_breed(preservedParent[pair].custom_dv_list,preservedParent[pair+1].custom_dv_list)
                 for kid_custom_dv in kids_custom_dv:
