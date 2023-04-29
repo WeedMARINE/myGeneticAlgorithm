@@ -200,8 +200,8 @@ class myGA:
                             else:
                                 pass
 
-                offspring_continuous_dv_arr[pair*2,var] = temp_cont_dv[0]
-                offspring_continuous_dv_arr[pair*2+1,var] = temp_cont_dv[1]
+                offspring_continuous_dv_arr[pair*2,:] = temp_cont_dv[0,:]
+                offspring_continuous_dv_arr[pair*2+1,:] = temp_cont_dv[1,:]
             
             if self._num_custom_dv > 0:    
                 kids_custom_dv = self._custom_dv_breed(preservedParent[pair].custom_dv_list,preservedParent[pair+1].custom_dv_list)
