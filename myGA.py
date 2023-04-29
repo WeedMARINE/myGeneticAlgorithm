@@ -54,8 +54,7 @@ class myGA:
         if parallel_cost == True:
             self._parallel_cost_flag = True
 
-        if mutate_continuous_dv:
-            self.mutate_continuous_dv_flag = True
+        self.mutate_continuous_dv_flag = True
 
         self._num_custom_dv = num_custom_dv
         if self._num_custom_dv > 0:
@@ -200,7 +199,7 @@ class myGA:
                                 temp_cont_dv[i,j] = self._varMax[j]
                             else:
                                 pass
-                            
+
                 offspring_continuous_dv_arr[pair*2,var] = temp_cont_dv[0]
                 offspring_continuous_dv_arr[pair*2+1,var] = temp_cont_dv[1]
             
